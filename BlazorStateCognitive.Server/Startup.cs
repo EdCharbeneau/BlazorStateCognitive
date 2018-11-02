@@ -25,6 +25,7 @@ namespace BlazorStateCognitive.Server
                     WasmMediaTypeNames.Application.Wasm,
                 });
             });
+            services.AddServerSideBlazor<Client.Startup>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,7 +43,7 @@ namespace BlazorStateCognitive.Server
                 routes.MapRoute(name: "default", template: "{controller}/{action}/{id?}");
             });
 
-            app.UseBlazor<Client.Startup>();
+            app.UseServerSideBlazor<Client.Startup>();
         }
     }
 }
