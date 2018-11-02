@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Blazor.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace BlazorStateCognitive.Server
                     WasmMediaTypeNames.Application.Wasm,
                 });
             });
+
             services.AddServerSideBlazor<Client.Startup>();
         }
 
@@ -42,7 +44,6 @@ namespace BlazorStateCognitive.Server
             {
                 routes.MapRoute(name: "default", template: "{controller}/{action}/{id?}");
             });
-
             app.UseServerSideBlazor<Client.Startup>();
         }
     }

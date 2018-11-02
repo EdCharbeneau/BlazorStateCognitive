@@ -1,5 +1,8 @@
 ﻿@using Blazor.FileReader
 @using System.IO;
+@using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+@using Newtonsoft.Json;
+
 @page "/fetchdata"
 @inject HttpClient Http
 @inject IFileReaderService fileReaderService;
@@ -7,12 +10,29 @@
 <h1>Cognitive Services Vision</h1>
 
 <input type="file" id="fileUpload" ref="fileUpload" onchange="@UploadFile" />
-<img src="@imageData" />
 
+<img src="@imageData" style="@( analysis != null ? $"border: 5px solid #{analysis.Color.AccentColor}" : "" )" />
+
+@if (analysis == null)
+{
+    <p>Select an image</p>
+}
+else
+{
+    <p>@analysis.Description.Captions.First().Text</p>
+    <p>@analysis.Color.AccentColor</p>
+    <ul>
+        @foreach (var tag in analysis.Tags)
+        {
+            <li>@tag.Name</li>
+        }
+    </ul>
+}
 @functions {
 
     ElementRef fileUpload;
     string imageData = String.Empty;
+    ImageAnalysis analysis;
 
     async Task UploadFile()
     {
@@ -20,11 +40,17 @@
 
         using (MemoryStream memoryStream = await files.First().CreateMemoryStreamAsync())
         {
-            imageData = $"data:image/jpg;base64,{Convert.ToBase64String(memoryStream.ToArray())}";
+            byte[] bytes = memoryStream.ToArray();
+
+            imageData = $"data:image/jpg;base64,{Convert.ToBase64String(bytes)}";
+            var response = await Http.PostAsync(
+                    requestUri: "api/SampleData/Save",
+                    content: new ByteArrayContent(bytes)
+                );
+            analysis = JsonConvert.DeserializeObject<ImageAnalysis>(await response.Content.ReadAsStringAsync());
+
         }
     }
-
-    //WeatherForecast[] forecasts;
 
     //protected override async Task OnInitAsync()
     //{
