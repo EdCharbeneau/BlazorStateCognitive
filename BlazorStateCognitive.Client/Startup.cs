@@ -1,3 +1,4 @@
+using Blazor.FileReader;
 using Microsoft.AspNetCore.Blazor.Builder;
 using Microsoft.AspNetCore.Blazor.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,8 @@ namespace BlazorStateCognitive.Client
                     };
                 });
             }
+
+            services.AddSingleton<IFileReaderService>(sp => new FileReaderService());
         }
 
         public void Configure(IBlazorApplicationBuilder app)
